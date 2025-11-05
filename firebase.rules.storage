@@ -1,0 +1,16 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isAdmin() {
+      return request.auth != null && request.auth.uid == "${VITE_ADMIN_UID}";
+    }
+    match /posters/{allPaths=**} {
+      allow read; // public poster images
+      allow write: if isAdmin();
+    }
+    match /trailers/{allPaths=**} {
+      allow read; // public video playback
+      allow write: if isAdmin();
+    }
+  }
+}

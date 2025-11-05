@@ -1,0 +1,12 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null && request.auth.uid == "${VITE_ADMIN_UID}"; // replace at deploy time or use firestore custom claims
+    }
+    match /titles/{id} {
+      allow read: if true; // public read
+      allow create, update, delete: if isAdmin();
+    }
+  }
+}
